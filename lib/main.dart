@@ -110,11 +110,57 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _onFirestoreButtonTap,
+            tooltip: 'Firestore',
+            child: const Icon(Icons.supervised_user_circle),
+          ),
+          const SizedBox(height: 10),
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _onFirestoreButtonTap() async {
+    /// Création d'un document
+
+    // try {
+    //   final documentReference = await FirebaseFirestore.instance.collection('users').add({
+    //     'name': 'Léa',
+    //     'age': 23,
+    //   });
+    //
+    //   print('Document généré : ${documentReference.id}');
+    // } catch (error) {
+    //   print('Oups, erreur: $error');
+    // }
+
+    /// Modification d'un document
+
+    // try {
+    //   const userId = '1tPhBXjw9cmE3TDohyQ1';
+    //   await FirebaseFirestore.instance.collection('users').doc(userId).set({
+    //     'name': 'Gérard',
+    //   }, SetOptions(merge: true));
+    // } catch(error) {
+    //   print('Oups, erreur: $error');
+    // }
+
+    /// Suppression d'un document
+
+    // try {
+    //   const userId = '1tPhBXjw9cmE3TDohyQ1';
+    //   await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+    // } catch(error) {
+    //   print('Oups, erreur: $error');
+    // }
   }
 }
