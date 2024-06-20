@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     FirebaseAnalytics.instance.setUserProperty(name: 'name', value: 'toto');
     FirebaseAnalytics.instance.setUserProperty(name: 'age', value: '42');
+
+    FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
+      for (final element in event.docs) {
+        print(element.data());
+      }
+    });
   }
 
   void _incrementCounter() {
@@ -65,50 +72,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Oups, une erreur est survenue'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final documents = snapshot.data?.docs;
+          if (documents == null || documents.isEmpty) {
+            return const Center(
+              child: Text('Oups, liste vide'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (context, index) {
+              final data = documents[index].data();
+              if(data == null) return const SizedBox();
+              final userData = data as Map<String, dynamic>;
+              return ListTile(
+                title: Text(userData['name'] as String),
+                subtitle: Text(userData['age'].toString()),
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -134,8 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // try {
     //   final documentReference = await FirebaseFirestore.instance.collection('users').add({
-    //     'name': 'Léa',
-    //     'age': 23,
+    //     'name': 'Ousmane',
+    //     'age': 54,
     //   });
     //
     //   print('Document généré : ${documentReference.id}');
@@ -144,12 +147,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
 
     /// Modification d'un document
-
+    //
     // try {
-    //   const userId = '1tPhBXjw9cmE3TDohyQ1';
-    //   await FirebaseFirestore.instance.collection('users').doc(userId).set({
-    //     'name': 'Gérard',
-    //   }, SetOptions(merge: true));
+    //   const userId = '3SLiErOWJsBCNlG6bQn0';
+    //   await FirebaseFirestore.instance.collection('users').doc(userId).update({
+    //     'age': '30',
+    //   });
     // } catch(error) {
     //   print('Oups, erreur: $error');
     // }
