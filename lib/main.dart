@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_moc/authenticated_screen.dart';
+import 'package:firebase_moc/unauthenticated_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +19,7 @@ void main() async {
   if (kDebugMode) {
     try {
       FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-      //FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+      FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     } catch (e) {
       // ignore: avoid_print
       print(e);
@@ -66,28 +69,23 @@ class _MyHomePageState extends State<MyHomePage> {
     //     print(element.data());
     //   }
     // });
-
-    // Stream<User?> stream = FirebaseAuth.instance.authStateChanges();
-    //
-    // try {
-    //   await FirebaseAuth.instance.createUserWithEmailAndPassword(
-    //     email: 'toto@gmail.com',
-    //     password: "Salut4",
-    //   );
-    // } on FirebaseAuthException catch (error) {
-    //
-    // } catch (error) {
-    //
-    // }
-    //
-    // FirebaseAuth.instance.signInWithEmailAndPassword(
-    //   email: 'toto@gmail.com',
-    //   password: "Salut4",
-    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final currentUser = snapshot.data;
+        if(currentUser == null) return const UnAuthenticatedScreen();
+        return const AuthenticatedScreen();
+      },
+    );
   }
 }
