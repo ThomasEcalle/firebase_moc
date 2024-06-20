@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
@@ -11,6 +12,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  if (kDebugMode) {
+    try {
+      FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+      //FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
 
   runApp(const MyApp());
 }
@@ -135,16 +146,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onFirestoreButtonTap() async {
     /// Création d'un document
 
-    // try {
-    //   final documentReference = await FirebaseFirestore.instance.collection('users').add({
-    //     'name': 'Ousmane',
-    //     'age': 54,
-    //   });
-    //
-    //   print('Document généré : ${documentReference.id}');
-    // } catch (error) {
-    //   print('Oups, erreur: $error');
-    // }
+    try {
+      final documentReference = await FirebaseFirestore.instance.collection('users').add({
+        'name': 'Ousmane',
+        'age': 54,
+      });
+
+      print('Document généré : ${documentReference.id}');
+    } catch (error) {
+      print('Oups, erreur: $error');
+    }
 
     /// Modification d'un document
     //
