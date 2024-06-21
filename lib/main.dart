@@ -28,8 +28,8 @@ void main() async {
 
   if (kDebugMode) {
     try {
-      // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-      // FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+      FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     } catch (e) {
       // ignore: avoid_print
       print(e);
