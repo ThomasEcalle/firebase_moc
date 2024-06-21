@@ -72,8 +72,9 @@ class _AuthenticatedScreenState extends State<AuthenticatedScreen> {
       throw Exception('Known bug');
     } catch (e, stacktrace) {
       await FirebaseCrashlytics.instance.recordError(
-        Exception('Impossible to logout'),
+        Exception('Impossible to logout 2'),
         stacktrace,
+        fatal: true,
       );
     }
   }
