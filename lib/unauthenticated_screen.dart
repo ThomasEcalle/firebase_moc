@@ -118,14 +118,10 @@ class _UnAuthenticatedScreenState extends State<UnAuthenticatedScreen> {
       final userId = userCredentials.user?.uid;
 
       try {
-        await FirebaseFirestore.instance.collection('users').doc(userId).set({
-          'pseudo': pseudo
-        });
-      } catch(error) {
+        await FirebaseFirestore.instance.collection('users').doc(userId).set({'pseudo': pseudo});
+      } catch (error) {
         print('Error writting in firestore: $error');
       }
-
-
     } on FirebaseAuthException catch (error) {
       print('FirebaseAuthException: $error');
     } catch (error) {
