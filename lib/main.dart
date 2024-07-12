@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_moc/authenticated_screen.dart';
 import 'package:firebase_moc/unauthenticated_screen.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,18 @@ void main() async {
       print(e);
     }
   }
+
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  await remoteConfig.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: const Duration(seconds: 10),
+  ));
+
+  await remoteConfig.fetchAndActivate();
+
+  final minimumBuildNumber = remoteConfig.getInt('minimumBuildNumber');
+
+  print('minimumBuildNumber: $minimumBuildNumber');
 
   runApp(const MyApp());
 }
