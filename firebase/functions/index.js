@@ -11,3 +11,4 @@ exports.helloWorld = onRequest((request, response) => {
 
 exports.onUserCreate = require("./auth_triggers/on_user_create");
 exports.onUserDelete = require("./firestore_triggers/on_user_delete");
+exports.onUserUpdate = require("./firestore_triggers/on_user_update");
